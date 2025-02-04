@@ -1,5 +1,5 @@
 import "./style.scss";
-import { BrowserRouter, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
 
@@ -14,6 +14,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/">
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
