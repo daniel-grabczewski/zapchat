@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase'
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-import { storage } from '../firebase'
-import { Link, useNavigate } from 'react-router-dom'
-import Add from '../img/addAvatar.png'
+import React, { useState } from "react"
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { auth, db, storage } from "../firebase"
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { doc, setDoc } from "firebase/firestore"
+import { Link, useNavigate } from "react-router-dom"
+import Add from "../img/addAvatar.png"
 
 const Register = () => {
   const [err, setErr] = useState(false)
@@ -20,18 +20,38 @@ const Register = () => {
     const file = e.target[3].files[0]
 
     try {
-      // Create user with email and password
+      // Create user
       const res = await createUserWithEmailAndPassword(auth, email, password)
 
       // Create a unique image name
       const date = new Date().getTime()
       const storageRef = ref(storage, `${displayName + date}`)
 
-      // Upload the file
       await uploadBytesResumable(storageRef, file).then(() => {
-        getDownloadURL(storageRef).then((downloadURL) => {
-          console.log('File available at', downloadURL)
-          setLoading(false)
+        getDownloadURL(storageRef).then(async (downloadURL) => {
+          try {
+            // Update profile
+            await updateProfile(res.user, {
+              displayName,
+              photoURL: downloadURL,
+            })
+            // Create user document in Firestore
+            await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayName,
+              email,
+              photoURL: downloadURL,
+            })
+
+            // Initialize user chats in Firestore
+            await setDoc(doc(db, "userChats", res.user.uid), {})
+            setLoading(false)
+            navigate("/")
+          } catch (err) {
+            console.log(err)
+            setErr(true)
+            setLoading(false)
+          }
         })
       })
     } catch (err) {
@@ -50,13 +70,13 @@ const Register = () => {
           <input required type="text" placeholder="display name" />
           <input required type="email" placeholder="email" />
           <input required type="password" placeholder="password" />
-          <input required style={{ display: 'none' }} type="file" id="file" />
+          <input required style={{ display: "none" }} type="file" id="file" />
           <label htmlFor="file">
             <img src={Add} alt="" />
             <span>Add an avatar</span>
           </label>
           <button disabled={loading}>Sign up</button>
-          {loading && 'Uploading...'}
+          {loading && "Uploading and compressing the image please wait..."}
           {err && <span>Something went wrong</span>}
         </form>
         <p>
