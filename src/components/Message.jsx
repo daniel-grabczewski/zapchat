@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { ChatContext } from '../context/ChatContext'
-import { formatTimestamp } from '../utils/formatTimestamp'
 
 const Message = ({ message }) => {
   const { currentUser } = useContext(AuthContext)
@@ -28,7 +27,6 @@ const Message = ({ message }) => {
           }
           alt="User Avatar"
         />
-        <span>{message.date ? formatTimestamp(message.date) : 'Just now'}</span>
       </div>
       <div className="messageContent">
         <p>{message.text}</p>
