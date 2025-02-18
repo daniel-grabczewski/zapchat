@@ -5,17 +5,28 @@ import { ChatContext } from '../context/ChatContext'
 const Message = ({ message }) => {
   const { currentUser } = useContext(AuthContext)
   const { data } = useContext(ChatContext)
-
   const ref = useRef()
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }, [message])
 
+  // Helper function to format the timestamp
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return 'Just now'
+    // If the timestamp is a Firebase timestamp, it has a toDate() method.
+    const date = timestamp.toDate
+      ? timestamp.toDate()
+      : new Date(timestamp.seconds * 1000)
+    return date.toLocaleString()
+  }
+
   return (
     <div
       ref={ref}
-      className={`message ${message.senderId === currentUser.uid && 'owner'}`}
+      className={`message ${
+        message.senderId === currentUser.uid ? 'owner' : ''
+      }`}
     >
       <div className="messageInfo">
         <img
@@ -24,13 +35,13 @@ const Message = ({ message }) => {
               ? currentUser.photoURL
               : data.user.photoURL
           }
-          alt=""
+          alt="User Avatar"
         />
-        <span>just now</span>
+        <span>{message.date ? formatTimestamp(message.date) : 'Just now'}</span>
       </div>
       <div className="messageContent">
         <p>{message.text}</p>
-        {message.img && <img src={message.img} alt="" />}
+        {message.img && <img src={message.img} alt="Message Content" />}
       </div>
     </div>
   )
