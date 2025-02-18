@@ -3,7 +3,13 @@ import Img from '../img/img.png'
 import Attach from '../img/attach.png'
 import { AuthContext } from '../context/AuthContext'
 import { ChatContext } from '../context/ChatContext'
-import { arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import {
+  arrayUnion,
+  doc,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore'
 import { db, storage } from '../firebase'
 import { v4 as uuid } from 'uuid'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
@@ -21,21 +27,23 @@ const Input = () => {
       const uploadTask = uploadBytesResumable(storageRef, img)
 
       uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Optional progress logic here
+        },
         (error) => {
-          // TODO: Handle Error
           console.error('Image upload error:', error)
         },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateDoc(doc(db, 'chats', data.chatId), {
-              messages: arrayUnion({
-                id: uuid(),
-                text,
-                senderId: currentUser.uid,
-                date: serverTimestamp(),
-                img: downloadURL,
-              }),
-            })
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+          await updateDoc(doc(db, 'chats', data.chatId), {
+            messages: arrayUnion({
+              id: uuid(),
+              text,
+              senderId: currentUser.uid,
+              date: Timestamp.now(),
+              img: downloadURL,
+            }),
           })
         }
       )
@@ -45,7 +53,7 @@ const Input = () => {
           id: uuid(),
           text,
           senderId: currentUser.uid,
-          date: serverTimestamp(),
+          date: Timestamp.now(),
         }),
       })
     }
