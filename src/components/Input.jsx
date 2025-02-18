@@ -3,13 +3,7 @@ import Img from '../img/img.png'
 import Attach from '../img/attach.png'
 import { AuthContext } from '../context/AuthContext'
 import { ChatContext } from '../context/ChatContext'
-import {
-  arrayUnion,
-  doc,
-  serverTimestamp,
-  Timestamp,
-  updateDoc,
-} from 'firebase/firestore'
+import { arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db, storage } from '../firebase'
 import { v4 as uuid } from 'uuid'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
@@ -24,12 +18,12 @@ const Input = () => {
   const handleSend = async () => {
     if (img) {
       const storageRef = ref(storage, uuid())
-
       const uploadTask = uploadBytesResumable(storageRef, img)
 
       uploadTask.on(
         (error) => {
-          //TODO:Handle Error
+          // TODO: Handle Error
+          console.error('Image upload error:', error)
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
@@ -38,7 +32,7 @@ const Input = () => {
                 id: uuid(),
                 text,
                 senderId: currentUser.uid,
-                date: Timestamp.now(),
+                date: serverTimestamp(),
                 img: downloadURL,
               }),
             })
@@ -51,7 +45,7 @@ const Input = () => {
           id: uuid(),
           text,
           senderId: currentUser.uid,
-          date: Timestamp.now(),
+          date: serverTimestamp(),
         }),
       })
     }
@@ -73,6 +67,7 @@ const Input = () => {
     setText('')
     setImg(null)
   }
+
   return (
     <div className="input">
       <input
