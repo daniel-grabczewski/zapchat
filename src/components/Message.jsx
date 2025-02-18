@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { ChatContext } from '../context/ChatContext'
+import { formatTimestamp } from '../utils/formatTimestamp'
 
 const Message = ({ message }) => {
   const { currentUser } = useContext(AuthContext)
@@ -10,16 +11,6 @@ const Message = ({ message }) => {
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }, [message])
-
-  // Helper function to format the timestamp
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return 'Just now'
-    // If the timestamp is a Firebase timestamp, it has a toDate() method.
-    const date = timestamp.toDate
-      ? timestamp.toDate()
-      : new Date(timestamp.seconds * 1000)
-    return date.toLocaleString()
-  }
 
   return (
     <div
