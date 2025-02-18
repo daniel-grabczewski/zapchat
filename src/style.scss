@@ -204,6 +204,14 @@
     .chat {
       flex: 2;
 
+      .timestampHeader {
+        text-align: center;
+        margin: 10px 0;
+        font-size: 12px;
+        color: gray;
+      }
+      
+
       .chatInfo {
         height: 50px;
         background-color: #5d5b8d;
