@@ -112,9 +112,7 @@ const Input = () => {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           value={text}
-          className={`input__text ${
-            previewUrl ? 'input__text--with-preview' : ''
-          }`}
+          className="input__text"
         />
         {previewUrl && (
           <div className="image-preview">
@@ -143,6 +141,7 @@ const Input = () => {
           </div>
         )}
       </div>
+
       <div className="input__send">
         <input
           type="file"

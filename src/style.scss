@@ -295,12 +295,12 @@
         background : white;
         
         &__container {
-          position: relative;
-          width: 100%;
+          display: flex;
+          align-items: center;
         }
         
         &__text {
-          width: 100%;
+          flex: 1;
           padding: 10px;
           font-size: 18px;
           border: none;
@@ -308,9 +308,6 @@
           color: #2f2d52;
           &::placeholder {
             color: lightgray;
-          }
-          &--with-preview {
-            padding: 10px 70px 10px 10px; // extra right padding to accommodate preview
           }
         }
         
@@ -332,6 +329,17 @@
           }
         }
 
+        .input__container {
+          position : static;
+          padding-right : 25px;
+          height : 60px;
+        }
+
+        .input__send {
+          margin-top : 0px;
+          gap : 5px;
+        }
+
         .send {
           display: flex;
           align-items: center;
@@ -351,17 +359,41 @@
           }
         }
       }
+      .input {
+        &__container {
+          position: relative;
+          width: 100%;
+        }
+      
+        &__text {
+          width: 100%;
+          padding: 10px;
+          font-size: 18px;
+          border: none;
+          outline: none;
+          color: #2f2d52;
+          &::placeholder {
+            color: lightgray;
+          }
+          &--with-preview {
+            padding: 10px 70px 10px 10px // extra right padding to accommodate preview
+          }
+        }
+      }
+      
+      // Updated image preview styles:
       .image-preview {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
         width: 50px;
         height: 50px;
         border: 1px solid #ccc;
         border-radius: 4px;
         overflow: hidden;
         background-color: #f9f9f9;
+        margin-left: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       
         &__spinner-container {
           width: 100%;
@@ -370,13 +402,13 @@
           align-items: center;
           justify-content: center;
         }
-        
+      
         &__img {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        
+      
         &__remove {
           position: absolute;
           top: 0;
@@ -389,6 +421,8 @@
           font-size: 12px;
         }
       }
+      
+      
       
       .spinner {
         border: 3px solid #f3f3f3;
