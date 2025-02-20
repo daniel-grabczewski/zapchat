@@ -22,6 +22,9 @@ const Input = () => {
   const { data } = useContext(ChatContext)
 
   const handleSend = async () => {
+    // Prevent sending if there's no text and no image
+    if (!text.trim() && !img) return
+
     if (img) {
       const storageRef = ref(storage, uuid())
       const uploadTask = uploadBytesResumable(storageRef, img)
@@ -59,21 +62,24 @@ const Input = () => {
     }
 
     await updateDoc(doc(db, 'userChats', currentUser.uid), {
-      [data.chatId + '.lastMessage']: {
-        text,
-      },
+      [data.chatId + '.lastMessage']: { text },
       [data.chatId + '.date']: serverTimestamp(),
     })
 
     await updateDoc(doc(db, 'userChats', data.user.uid), {
-      [data.chatId + '.lastMessage']: {
-        text,
-      },
+      [data.chatId + '.lastMessage']: { text },
       [data.chatId + '.date']: serverTimestamp(),
     })
 
     setText('')
     setImg(null)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSend()
+    }
   }
 
   return (
@@ -82,6 +88,7 @@ const Input = () => {
         type="text"
         placeholder="Type something..."
         onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
         value={text}
       />
       <div className="send">
