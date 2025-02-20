@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useRef } from 'react'
 import Img from '../img/img.png'
 import Attach from '../img/attach.png'
 import { AuthContext } from '../context/AuthContext'
@@ -17,12 +17,14 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 const Input = () => {
   const [text, setText] = useState('')
   const [img, setImg] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
 
+  const fileInputRef = useRef(null)
   const { currentUser } = useContext(AuthContext)
   const { data } = useContext(ChatContext)
 
   const handleSend = async () => {
-    // Prevent sending if there's no text and no image
     if (!text.trim() && !img) return
 
     if (img) {
@@ -32,7 +34,7 @@ const Input = () => {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          // Optional progress logic here
+          // Optional: progress logic
         },
         (error) => {
           console.error('Image upload error:', error)
@@ -73,6 +75,8 @@ const Input = () => {
 
     setText('')
     setImg(null)
+    setPreviewUrl(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleKeyDown = (e) => {
@@ -82,27 +86,78 @@ const Input = () => {
     }
   }
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setImg(file)
+      setPreviewLoading(true)
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setPreviewUrl(event.target.result)
+        setPreviewLoading(false)
+      }
+      reader.onerror = () => {
+        setPreviewLoading(false)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <div className="input">
-      <input
-        type="text"
-        placeholder="Type something..."
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={handleKeyDown}
-        value={text}
-      />
-      <div className="send">
-        <img src={Attach} alt="" />
+      <div className="input__container">
+        <input
+          type="text"
+          placeholder="Type something..."
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          value={text}
+          className={`input__text ${
+            previewUrl ? 'input__text--with-preview' : ''
+          }`}
+        />
+        {previewUrl && (
+          <div className="image-preview">
+            {previewLoading ? (
+              <div className="image-preview__spinner-container">
+                <div className="spinner"></div>
+              </div>
+            ) : (
+              <img
+                src={previewUrl}
+                alt="preview"
+                className="image-preview__img"
+                onLoad={() => setPreviewLoading(false)}
+              />
+            )}
+            <button
+              onClick={() => {
+                setImg(null)
+                setPreviewUrl(null)
+                if (fileInputRef.current) fileInputRef.current.value = ''
+              }}
+              className="image-preview__remove"
+            >
+              X
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="input__send">
+        <img src={Attach} alt="Attach" style={{ cursor: 'pointer' }} />
         <input
           type="file"
-          style={{ display: 'none' }}
           id="file"
-          onChange={(e) => setImg(e.target.files[0])}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
         />
-        <label htmlFor="file">
-          <img src={Img} alt="" />
+        <label htmlFor="file" style={{ cursor: 'pointer' }}>
+          <img src={Img} alt="Upload" />
         </label>
-        <button onClick={handleSend}>Send</button>
+        <div className="send">
+          <button onClick={handleSend}>Send</button>
+        </div>
       </div>
     </div>
   )
