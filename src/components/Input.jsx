@@ -144,7 +144,6 @@ const Input = () => {
         )}
       </div>
       <div className="input__send">
-        <img src={Attach} alt="Attach" style={{ cursor: 'pointer' }} />
         <input
           type="file"
           id="file"
