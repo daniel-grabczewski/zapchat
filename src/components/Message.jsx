@@ -29,7 +29,7 @@ const Message = ({ message }) => {
         />
       </div>
       <div className="messageContent">
-        <p>{message.text}</p>
+        {message.text && message.text.trim() !== '' && <p>{message.text}</p>}
         {message.img && <img src={message.img} alt="Message Content" />}
       </div>
     </div>
