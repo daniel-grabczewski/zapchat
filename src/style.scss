@@ -100,12 +100,13 @@
     width: 65%;
     height: 80%;
     display: flex;
-    overflow: hidden;
     @include tablet {
      width: 90%;
     }
 
     .sidebar {
+      min-width : 30%;
+      max-width : 30%;
       flex: 1;
       background-color: #3e3c61;
       position: relative;
@@ -181,15 +182,18 @@
         &:hover {
           background-color: #2f2d52;
         }
-
+        $image-size : 50px;
         img {
-          width: 50px;
-          height: 50px;
+          
+          width: $image-size;
+          height: $image-size;
           border-radius: 50%;
           object-fit: cover;
         }
 
         .userChatInfo {
+          max-width: calc(100% - ($image-size + 20px));
+
           span {
             font-size: 18px;
             font-weight: 500;
@@ -197,6 +201,9 @@
           p {
             font-size: 14px;
             color: lightgray;
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
           }
         }
       }
