@@ -244,6 +244,8 @@
         padding: 10px;
         height: calc(100% - 160px);
         overflow-y: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: #aeacd1 transparent;
 
         .message {
           display: flex;
