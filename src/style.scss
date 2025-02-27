@@ -297,6 +297,7 @@
       }
 
       .input {
+        padding-right : 10px;
         display: flex;
         flex-direction: row;
         background : white;
@@ -338,13 +339,16 @@
 
         .input__container {
           position : static;
-          padding-right : 25px;
-          height : 60px;
+          height : 70px;
         }
 
         .input__send {
           margin-top : 0px;
-          gap : 5px;
+          gap : 8px;
+        }
+
+        .uploadButton {
+          margin-top : 2px;
         }
 
         .send {
@@ -357,9 +361,12 @@
             cursor: pointer;
           }
 
+
+
           button {
             border: none;
             padding: 10px 15px;
+            border-radius : 8px;
             color: white;
             background-color: #8da4f1;
             cursor: pointer;

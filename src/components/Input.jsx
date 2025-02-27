@@ -151,7 +151,7 @@ const Input = () => {
           style={{ display: 'none' }}
         />
         <label htmlFor="file" style={{ cursor: 'pointer' }}>
-          <img src={Img} alt="Upload" />
+          <img src={Img} className="uploadButton" alt="Upload" />
         </label>
         <div className="send">
           <button onClick={handleSend}>Send</button>
